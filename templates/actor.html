@@ -66,7 +66,7 @@
                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                                 {% else %}
                                 <div
-                                    class="w-full h-full flex items-center justify-center text-gray-600 text-[10px] p-2 text-center italic">
+                                    class="w-full h-full flex items-center justify-center text-gray-600 text-[10px] p-2 text-center">
                                     Poster non disponibile
                                 </div>
                                 {% endif %}
@@ -74,7 +74,7 @@
                                 </div>
                             </div>
                             <p class="text-sm font-bold truncate">{{ movie.title }}</p>
-                            <p class="text-xs text-gray-500 truncate italic">interpretando {{ movie.character if
+                            <p class="text-xs text-gray-500 truncate">interpretando {{ movie.character if
                                 movie.character else 'N/D' }}</p>
                         </div>
                         {% endfor %}
