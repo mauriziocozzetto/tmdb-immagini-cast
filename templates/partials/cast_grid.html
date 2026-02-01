@@ -15,8 +15,7 @@
                 <img src="{{ img_base }}{{ actor.profile_path }}" alt="{{ actor.name }}"
                     class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500">
                 {% else %}
-                <div
-                    class="w-full h-full flex items-center justify-center text-gray-600 italic text-xs p-4 text-center">
+                <div class="w-full h-full flex items-center justify-center text-gray-600 text-xs p-4 text-center">
                     Nessuna immagine
                 </div>
                 {% endif %}
@@ -28,7 +27,7 @@
             <h3 class="font-bold text-sm leading-tight mb-1 group-hover:text-blue-400 transition-colors">
                 {{ actor.name }}
             </h3>
-            <p class="text-gray-500 text-xs font-medium italic">
+            <p class="text-gray-500 text-xs font-medium">
                 {{ actor.character }}
             </p>
         </a>
