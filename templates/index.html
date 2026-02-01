@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieCast Finder</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .search-gradient {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            color: white;
+        }
+
+        /* Effetto di caricamento mentre HTMX lavora */
+        .htmx-indicator {
+            opacity: 0;
+            transition: opacity 200ms ease-in;
+        }
+
+        .htmx-request .htmx-indicator {
+            opacity: 1;
+        }
+
+        .htmx-request#results-container {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen font-sans">
+
+    <div class="max-w-6xl mx-auto px-6 py-12">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl font-black tracking-tight mb-2">
+                Movie<span class="text-blue-500">Cast</span>
+            </h1>
+            <p class="text-gray-500 text-sm">Scopri chi ha partecipato ai tuoi film preferiti</p>
+        </div>
+
+        <div class="mb-20">
+            <form hx-post="/search" hx-target="#results-container" hx-indicator="#loading-spinner"
+                class="relative max-w-4xl mx-auto">
+                <input type="text" name="title" id="searchInput" placeholder="Cerca un film (es. Inception)..." required
+                    class="w-full p-5 pr-36 rounded-full text-black outline-none shadow-2xl focus:ring-4 focus:ring-blue-500/30 transition-all text-lg">
+
+                <button type="submit"
+                    class="absolute right-0 top-0 h-full px-10 rounded-full search-gradient font-bold hover:opacity-90 transition active:scale-95 text-lg">
+                    Cerca
+                </button>
+            </form>
+
+            <div id="loading-spinner" class="htmx-indicator flex justify-center mt-6">
+                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        </div>
+
+        <div id="results-container" class="w-full min-h-[400px]">
+            <div class="text-center py-20 border-2 border-dashed border-gray-800 rounded-3xl">
+                <p class="text-gray-600">Inserisci il titolo di un film sopra per iniziare</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
