@@ -1,3 +1,5 @@
+from fastapi.exceptions import RequestValidationError
+from fastapi import FastAPI, Request, Form, HTTPException  # Aggiungi HTTPException
 import httpx
 from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
@@ -52,28 +54,53 @@ async def search_movie(request: Request, title: str = Form(...)):
 @app.get("/actor/{actor_id}", response_class=HTMLResponse)
 async def actor_details(request: Request, actor_id: int):
     async with httpx.AsyncClient() as client:
-        # 1. Recuperiamo i dettagli dell'attore (biografia, data nascita, ecc.)
-        # Usiamo append_to_response=movie_credits per vedere anche i suoi altri film!
-        res = await client.get(
-            f"{BASE_URL}/person/{actor_id}",
-            params={
-                "api_key": API_KEY,
-                "language": "it-IT",
-                "append_to_response": "movie_credits"
-            }
-        )
-        actor = res.json()
+        try:
+            res = await client.get(
+                f"{BASE_URL}/person/{actor_id}",
+                params={
+                    "api_key": API_KEY,
+                    "language": "it-IT",
+                    "append_to_response": "movie_credits"
+                }
+            )
 
-        # Prendiamo i film più famosi in cui ha recitato
-        known_for = sorted(
-            actor.get('movie_credits', {}).get('cast', []),
-            key=lambda x: x.get('popularity', 0),
-            reverse=True
-        )[:6]
+            # Se l'ID non esiste, TMDB restituisce 404
+            if res.status_code == 404:
+                raise HTTPException(
+                    status_code=404, detail="Attore non trovato")
 
-        return templates.TemplateResponse("actor.html", {
-            "request": request,
-            "actor": actor,
-            "known_for": known_for,
-            "img_base": "https://image.tmdb.org/t/p/w500"
-        })
+            res.raise_for_status()  # Gestisce altri errori di rete
+            actor = res.json()
+
+            # ... resto del codice per ordinare i film ...
+            known_for = sorted(
+                actor.get('movie_credits', {}).get('cast', []),
+                key=lambda x: x.get('popularity', 0),
+                reverse=True
+            )[:6]
+
+            return templates.TemplateResponse("actor.html", {
+                "request": request,
+                "actor": actor,
+                "known_for": known_for,
+                "img_base": "https://image.tmdb.org/t/p/w500"
+            })
+
+        except (httpx.HTTPStatusError, HTTPException):
+            # Se l'ID è sbagliato, mostriamo una pagina 404 personalizzata
+            return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+
+
+# Questo handler "cattura" gli errori di validazione (come 'mmmm' al posto di un numero)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    # Invece del JSON, restituiamo la nostra pagina 404.html
+    return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+
+# Facciamo lo stesso per gli errori 404 generici (es. rotte che non esistono)
+
+
+@app.exception_handler(404)
+async def custom_404_handler(request: Request, __):
+    return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
