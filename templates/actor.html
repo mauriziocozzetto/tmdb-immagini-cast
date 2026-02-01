@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{{ actor.name }} - Dettagli</title>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="max-w-5xl mx-auto px-6 py-12">
+        <a href="/" class="inline-block mb-8 text-blue-400 hover:text-blue-300">← Torna alla ricerca</a>
+
+        <div class="flex flex-col md:flex-row gap-12">
+            <div class="w-full md:w-1/3">
+                <img src="{{ img_base }}{{ actor.profile_path }}" class="rounded-3xl shadow-2xl w-full">
+            </div>
+
+            <div class="w-full md:w-2/3">
+                <h1 class="text-5xl font-black mb-4">{{ actor.name }}</h1>
+                <p class="text-gray-400 mb-6">Nato il: {{ actor.birthday if actor.birthday else 'N/D' }}</p>
+
+                <h2 class="text-xl font-bold mb-3 text-blue-400">Biografia</h2>
+                <p class="text-gray-300 leading-relaxed mb-8">
+                    {{ actor.biography if actor.biography else 'Biografia non disponibile in italiano.' }}
+                </p>
+
+                <h2 class="text-xl font-bold mb-6">Conosciuto per</h2>
+                <div class="grid grid-cols-3 gap-4">
+                    {% for movie in known_for %}
+                    <div class="text-center">
+                        <img src="{{ img_base }}{{ movie.poster_path }}" class="rounded-lg mb-2 shadow-md">
+                        <p class="text-xs font-bold truncate">{{ movie.title }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
